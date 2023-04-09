@@ -111,15 +111,14 @@ module Ruboty
 
       def url
         @url ||= begin
-          response = Net::HTTP.post_form(URI.parse('https://slack.com/api/rtm.connect'), token: ENV['SLACK_TOKEN'])
-          body = JSON.parse(response.body)
+          body = client.rtm_connect
 
           URI.parse(body['url'])
         end
       end
 
       def client
-        @client ||= ::Slack::Client.new(token: ENV['SLACK_TOKEN'])
+        @client ||= ::Slack::Web::Client.new(token: ENV['SLACK_TOKEN'])
       end
 
       def realtime
@@ -303,7 +302,7 @@ module Ruboty
       end
 
       def make_channels_cache
-        resp = client.channels_list
+        resp = client.conversations_list
         if resp['ok']
           resp['channels'].each do |channel|
             @channel_info_caches[channel['id']] = channel
@@ -312,7 +311,7 @@ module Ruboty
       end
 
       def make_usergroups_cache
-        resp = client.get("usergroups.list")
+        resp = client.usergroups_list
         if resp['ok']
           resp['usergroups'].each do |usergroup|
             @usergroup_info_caches[usergroup['id']] = usergroup
