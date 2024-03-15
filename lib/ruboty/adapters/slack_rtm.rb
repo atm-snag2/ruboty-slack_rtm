@@ -311,7 +311,11 @@ module Ruboty
       end
 
       def make_usergroups_cache
-        resp = client.usergroups_list
+        begin
+          resp = client.usergroups_list
+        rescue Slack::Web::Api::Errors::NotAllowedTokenType
+          resp = { 'ok' => false }
+        end
         if resp['ok']
           resp['usergroups'].each do |usergroup|
             @usergroup_info_caches[usergroup['id']] = usergroup
