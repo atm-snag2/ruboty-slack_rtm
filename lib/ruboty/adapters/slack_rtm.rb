@@ -118,7 +118,7 @@ module Ruboty
       end
 
       def client
-        @client ||= ::Slack::Web::Client.new(token: ENV['SLACK_TOKEN'])
+        @client ||= ::Ruboty::SlackRTM::SlackWebClientWrapper.new(token: ENV['SLACK_TOKEN'])
       end
 
       def realtime
