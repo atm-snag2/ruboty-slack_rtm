@@ -118,7 +118,7 @@ module Ruboty
       end
 
       def client
-        @client ||= ::Slack::Web::Client.new(token: ENV['SLACK_TOKEN'])
+        @client ||= ::Ruboty::SlackRTM::SlackWebClientWrapper.new(token: ENV['SLACK_TOKEN'])
       end
 
       def realtime
@@ -311,11 +311,7 @@ module Ruboty
       end
 
       def make_usergroups_cache
-        begin
-          resp = client.usergroups_list
-        rescue Slack::Web::Api::Errors::NotAllowedTokenType
-          resp = { 'ok' => false }
-        end
+        resp = client.usergroups_list
         if resp['ok']
           resp['usergroups'].each do |usergroup|
             @usergroup_info_caches[usergroup['id']] = usergroup
